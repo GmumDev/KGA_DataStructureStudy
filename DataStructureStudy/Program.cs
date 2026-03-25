@@ -47,20 +47,24 @@ namespace DataStructureStudy
 	{
 		T[] data;
 		int topIndex;
-		public Stack() { data = new T[100]; topIndex = 0; }
+		private int size;
+		public int Size { get => size; }
+		public Stack(int size) { this.size = size; data = new T[size]; topIndex = 0; }
 		public void Add(T item) {
-			if (topIndex == 100)
+			if (topIndex == size)
 			{
-				Console.Write("Out of memory. Failed to Add");
-				return;
+				throw new OutOfMemoryException("Out of memory. Failed to Add");
+				//Console.Write("Out of memory. Failed to Add");
+				//return;
 			}
 			data[topIndex++] = item;
 		}
 		public T Pop() {
 			if (topIndex == 0)
 			{
-				Console.WriteLine("No item in stack. Failed to pop");
-				return default;
+				throw new InvalidOperationException("No item in stack. Failed to pop");
+				//Console.WriteLine("No item in stack. Failed to pop");
+				//return default;
 			}
 			return data[--topIndex]; 
 		}
@@ -80,12 +84,14 @@ namespace DataStructureStudy
 		T[] data;
 		int head;
 		int tail;
-		public Queue() { data = new T[100]; head = 0; tail = 0; }
+		private int size;
+		public int Size { get => size; }
+		public Queue(int size) { this.size = size; data = new T[size]; head = 0; tail = 0; }
 		public void Enqueue(T item) {
-			if (tail == 100)
+			if (tail == size)
 			{
 				ReAllocate();
-				if (tail == 100)
+				if (tail == size)
 				{
 					Console.Write("Out of memory. Failed to enqueue");
 					return;
@@ -264,27 +270,50 @@ namespace DataStructureStudy
 		static void DoTest()
 		{
 			Console.WriteLine("[Stack]");
-			Stack<int> stack = new Stack<int>();
-			Console.Write("    Add(1);  ");
-			stack.Add(1);
-			stack.Print();
-			Console.Write("    Add(2);  ");
-			stack.Add(2);
-			stack.Print();
-			Console.Write("    Add(3);  ");
-			stack.Add(3);
-			stack.Print();
+			Stack<int> stack = new Stack<int>(100);
+
+			try
+			{
+				Console.Write("    Add(1);  ");
+				stack.Add(1);
+				stack.Print();
+				Console.Write("    Add(2);  ");
+				stack.Add(2);
+				stack.Print();
+				Console.Write("    Add(3);  ");
+				stack.Add(3);
+				stack.Print();
+			}
+			catch (OutOfMemoryException e)
+			{
+				Console.WriteLine(e.Message);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("예상하지 못한 에러:" + e.Message);
+			}
 
 			Console.WriteLine();
 
-			Console.Write($"    Pop(); {stack.Pop()} ");
-			stack.Print();
-			Console.Write($"    Pop(); {stack.Pop()} ");
-			stack.Print();
-			Console.Write($"    Pop(); {stack.Pop()} ");
-			stack.Print();
-			Console.Write($"    Pop(); {stack.Pop()} ");
-			stack.Print();
+			try
+			{
+				Console.Write($"    Pop(); {stack.Pop()} ");
+				stack.Print();
+				Console.Write($"    Pop(); {stack.Pop()} ");
+				stack.Print();
+				Console.Write($"    Pop(); {stack.Pop()} ");
+				stack.Print();
+				Console.Write($"    Pop(); {stack.Pop()} ");
+				stack.Print();
+			}
+			catch (InvalidOperationException e)
+			{
+				Console.WriteLine(e.Message);
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine("예상하지 못한 에러:" + e.Message);
+			}
 
 			Console.WriteLine();
 
@@ -301,7 +330,7 @@ namespace DataStructureStudy
 			Console.WriteLine();
 			Console.WriteLine();
 			Console.WriteLine("[Queue]");
-			Queue<int> queue = new Queue<int>();
+			Queue<int> queue = new Queue<int>(100);
 			Console.Write("    Enqueue(1);  ");
 			queue.Enqueue(1);
 			queue.Print();
